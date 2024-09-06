@@ -14,7 +14,7 @@ workflow select_VCFs {
         File region_file
     }
 
-    call run_filtering { 
+    call run_selecting { 
 			input: vcf = vcf_file, tabix = tabix_file, region=region_file
 	}
 
