@@ -1,0 +1,3 @@
+{
+  "sort_VCFs.vcf_files": ["test.samp1.vcf.gz", "test.samp2.vcf.gz"]
+}

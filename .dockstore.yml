@@ -1,0 +1,11 @@
+version: 1.0
+workflows:
+  - name: sort_VCFs
+    subclass: WDL
+    description: Sort individual sample VCFs
+    primaryDescriptorPath: /workflow.wdl
+    authors:
+      - name: Shloka Negi
+        email: shnegi@ucsc.edu
+      - name: Phuwanat Sakornsakolpat
+        email: phuwanat.sak@mahidol.edu
