@@ -1,33 +1,35 @@
 version 1.0
 
-workflow filter_VCFs {
+workflow select_VCFs {
 
     meta {
 	author: "Phuwanat Sakornsakolpat"
         email: "phuwanat.sak@mahidol.edu"
-        description: "Filter VCF"
+        description: "Select VCF"
     }
 
      input {
-        Array[File] vcf_files
+        File vcf_file
+        File tabix_file
+        File region_file
     }
 
-    scatter(this_file in vcf_files) {
-		call run_filtering { 
-			input: vcf = this_file
-		}
+    call run_filtering { 
+			input: vcf = vcf_file, tabix = tabix_file, region=region_file
 	}
 
     output {
-        Array[File] filtered_vcf = run_filtering.out_file
-        Array[File] filtered_tbi = run_filtering.out_file_tbi
+        File selected_vcf = run_selecting.out_file
+        File selected_tbi = run_selecting.out_file_tbi
     }
 
 }
 
-task run_filtering {
+task run_selecting {
     input {
         File vcf
+        File tabix
+        File region
         Int memSizeGB = 8
         Int threadCount = 2
         Int diskSizeGB = 8*round(size(vcf, "GB")) + 20
@@ -35,16 +37,13 @@ task run_filtering {
     }
     
     command <<<
-	tabix -p vcf ~{vcf}
-	bcftools view -i 'F_MISSING < 0.05 && FILTER="PASS"' -o ~{out_name}.filtered0.vcf.gz ~{vcf}
-	tabix -p vcf ~{out_name}.filtered0.vcf.gz
-	bcftools sort -m 2G -Oz -o ~{out_name}.filtered.vcf.gz ~{out_name}.filtered0.vcf.gz
-	tabix -p vcf ~{out_name}.filtered.vcf.gz
+	bcftools view -R ~{region} -o ~{out_name}.selected.vcf.gz ~{vcf}
+	tabix -p vcf ~{out_name}.selected.vcf.gz
     >>>
 
     output {
-        File out_file = select_first(glob("*.filtered.vcf.gz"))
-        File out_file_tbi = select_first(glob("*.filtered.vcf.gz.tbi"))
+        File out_file = select_first(glob("*.selected.vcf.gz"))
+        File out_file_tbi = select_first(glob("*.selected.vcf.gz.tbi"))
     }
 
     runtime {

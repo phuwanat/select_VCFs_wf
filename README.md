@@ -1,5 +1,5 @@
-# Sort VCFs workflow
-Merge individual sample VCFs to create a unified multi-sample VCF, optionally allowing for modification of sample names.
+# Select VCFs workflow
+Only select some variants from VCF
 
 ## Input considerations
 * List of VCF file paths
