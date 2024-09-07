@@ -35,7 +35,7 @@ workflow select_VCFs {
 task run_selecting {
     input {
         File vcf
-        File tabix
+        File? tabix
         File region
         Int memSizeGB = 8
         Int threadCount = 2
