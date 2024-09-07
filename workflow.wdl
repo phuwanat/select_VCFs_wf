@@ -18,17 +18,22 @@ workflow select_VCFs {
         call run_selecting { 
             input: vcf = vcf_file, tabix = tabix_file, region=region_file
 	}
+        output {
+            File selected_vcf = run_selecting.out_file
+            File selected_tbi = run_selecting.out_file_tbi
+        }
     }
     if (!defined(tabix_file)) {
         call run_selecting_notabix { 
             input: vcf = vcf_file, region=region_file
 	}
+        output {
+            File selected_vcf = run_selecting_notabix.out_file
+            File selected_tbi = run_selecting_notabix.out_file_tbi
+        }
     }
 
-    output {
-        File selected_vcf = run_selecting.out_file
-        File selected_tbi = run_selecting.out_file_tbi
-    }
+
 
 }
 
