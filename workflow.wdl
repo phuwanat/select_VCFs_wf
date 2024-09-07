@@ -18,7 +18,8 @@ workflow select_VCFs {
         call run_selecting { 
             input: vcf = vcf_file, tabix = tabix_file, region=region_file
 	}
-    } else {
+    }
+    if (!defined(tabix_file)) {
         call run_selecting_notabix { 
             input: vcf = vcf_file, region=region_file
 	}
