@@ -28,7 +28,7 @@ workflow select_VCFs {
     Array[File?] optional_clinical_results = run_selecting.out_file
     Array[File?] optional_research_results = run_selecting_notabix.out_file
 
-    Array[File] clincal_and_research_results = flatten([select_all(ClinicalTask.results), select_all(ResearchTask.results)])
+    Array[File] clincal_and_research_results = flatten([select_all(run_selecting.out_file), select_all(run_selecting_notabix.out_file)])
 
     output {
         Array[File] selected_vcf = clincal_and_research_results
