@@ -37,8 +37,8 @@ workflow select_VCFs {
 
 task run_selecting {
     input {
-        File vcf
-        File tabix
+        File? vcf
+        File? tabix
         File region
         Int memSizeGB = 8
         Int threadCount = 2
@@ -67,8 +67,8 @@ task run_selecting {
 
 task run_selecting_notabix {
     input {
-        File vcf
-        File region
+        File? vcf
+        File? region
         Int memSizeGB = 8
         Int threadCount = 2
         Int diskSizeGB = 8*round(size(vcf, "GB")) + 20
