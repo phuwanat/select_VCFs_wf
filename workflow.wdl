@@ -74,7 +74,7 @@ task make_tabix {
         File tbvcf
         Int tbmemSizeGB = 8
         Int tbthreadCount = 2
-        Int tbdiskSizeGB = 8*round(size(vcf, "GB")) + 20
+        Int tbdiskSizeGB = 8*round(size(tbvcf, "GB")) + 20
 	String tbout_name = basename(tbvcf, ".vcf.gz")
     }
     
