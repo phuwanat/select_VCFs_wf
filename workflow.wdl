@@ -38,7 +38,7 @@ task run_selecting {
     
     command <<<
 	mv ~{tabix} ~{vcf}.tbi
-	bcftools view -R ~{region} -o ~{out_name}.selected.vcf.gz ~{vcf}
+	bcftools view -R ~{region} -Oz -o ~{out_name}.selected.vcf.gz ~{vcf}
 	tabix -p vcf ~{out_name}.selected.vcf.gz
     >>>
 
