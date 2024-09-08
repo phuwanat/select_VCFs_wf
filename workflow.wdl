@@ -17,7 +17,7 @@ workflow select_VCFs {
 
     if (!defined(tabix_file)) {
         call make_tabix { 
-            input: vcf = vcf_file
+            input: tbvcf = vcf_file
 	    }
         call run_selecting { 
             input: vcf = vcf_file, tabix = make_tabix.out_tbi, region=region_file
@@ -71,15 +71,15 @@ task run_selecting {
 
 task make_tabix {
     input {
-        File vcf
-        Int memSizeGB = 8
-        Int threadCount = 2
-        Int diskSizeGB = 8*round(size(vcf, "GB")) + 20
-	String out_name = basename(vcf, ".vcf.gz")
+        File tbvcf
+        Int tbmemSizeGB = 8
+        Int tbthreadCount = 2
+        Int tbdiskSizeGB = 8*round(size(vcf, "GB")) + 20
+	String tbout_name = basename(tbvcf, ".vcf.gz")
     }
     
     command <<<
-	tabix -p vcf ~{vcf}
+	tabix -p vcf ~{tbvcf}
     >>>
 
     output {
@@ -87,9 +87,9 @@ task make_tabix {
     }
 
     runtime {
-        memory: memSizeGB + " GB"
-        cpu: threadCount
-        disks: "local-disk " + diskSizeGB + " SSD"
+        memory: tbmemSizeGB + " GB"
+        cpu: tbthreadCount
+        disks: "local-disk " + tbdiskSizeGB + " SSD"
         docker: "quay.io/biocontainers/bcftools@sha256:f3a74a67de12dc22094e299fbb3bcd172eb81cc6d3e25f4b13762e8f9a9e80aa"   # digest: quay.io/biocontainers/bcftools:1.16--hfe4b78e_1
         preemptible: 2
     }
