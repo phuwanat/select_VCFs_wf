@@ -52,7 +52,7 @@ task run_selecting {
     >>>
 
     output {
-        File out_file = select_first(glob("*.selected.vcf.gz"))
+        File? out_file = select_first(glob("*.selected.vcf.gz"))
     }
 
     runtime {
@@ -81,7 +81,7 @@ task run_selecting_notabix {
     >>>
 
     output {
-        File out_file = select_first(glob("*.selected.vcf.gz"))
+        File? out_file = select_first(glob("*.selected.vcf.gz"))
     }
 
     runtime {
