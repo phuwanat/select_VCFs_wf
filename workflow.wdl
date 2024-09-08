@@ -14,28 +14,27 @@ workflow select_VCFs {
         File region_file
     }
 
-    if (defined(tabix_file)) {
-        call run_selecting { 
-            input: vcf = vcf_file, tabix = tabix_file, region=region_file
-	}
-    }
+
     if (!defined(tabix_file)) {
-        call run_selecting_notabix { 
-            input: vcf = vcf_file, region=region_file
-	}
+        call make_tabix { 
+            input: vcf = vcf_file
+	    }
+        call run_selecting { 
+            input: vcf = vcf_file, tabix = make_tabix.out_tbi, region=region_file
+	    }
     }
+    
+    if (defined(tabix_file)) {
+        call run_selecting {
+            input: vcf = vcf_file, tabix = tabix_file, region=region_file
+	    }
+    }
+    
 
     output {
-        if (defined(tabix_file)) {
             File selected_vcf = run_selecting.out_file
             File selected_tbi = run_selecting.out_file_tbi
-        }
-
-        if (!defined(tabix_file)) {
-            File selected_vcf = run_selecting_notabix.out_file
-            File selected_tbi = run_selecting_notabix.out_file_tbi
-        }
-
+    }
 }
 
 task run_selecting {
@@ -70,10 +69,9 @@ task run_selecting {
 
 }
 
-task run_selecting_notabix {
+task make_tabix {
     input {
         File vcf
-        File region
         Int memSizeGB = 8
         Int threadCount = 2
         Int diskSizeGB = 8*round(size(vcf, "GB")) + 20
@@ -82,13 +80,10 @@ task run_selecting_notabix {
     
     command <<<
 	tabix -p vcf ~{vcf}
-	bcftools view -R ~{region} -o ~{out_name}.selected.vcf.gz ~{vcf}
-	tabix -p vcf ~{out_name}.selected.vcf.gz
     >>>
 
     output {
-        File out_file = select_first(glob("*.selected.vcf.gz"))
-        File out_file_tbi = select_first(glob("*.selected.vcf.gz.tbi"))
+        File out_tbi = select_first(glob("*.vcf.gz.tbi"))
     }
 
     runtime {
